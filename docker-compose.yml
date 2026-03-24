@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  ui-tests:
+    build: .
+    container_name: saucedemo-ui-tests
+    volumes:
+      - ./target:/app/target
+      - ./allure-results:/app/allure-results
+    environment:
+      - BROWSER=chrome
+      - HEADLESS=true

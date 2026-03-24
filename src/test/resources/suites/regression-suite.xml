@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Regression Test Suite" parallel="false">
+    <test name="Regression Tests - Full Coverage">
+        <classes>
+            <!-- Login Tests -->
+            <class name="com.saucedemo.tests.LoginPageTest"/>
+            
+            <!-- Products Tests -->
+            <class name="com.saucedemo.tests.ProductsPageTest"/>
+            <class name="com.saucedemo.tests.ProductDetailsPageTest"/>
+            
+            <!-- Cart and Checkout Tests -->
+            <class name="com.saucedemo.tests.CartPageTest"/>
+            <class name="com.saucedemo.tests.CheckoutPageTest"/>
+            
+            <!-- User-Specific Tests -->
+            <class name="com.saucedemo.tests.user.StandardUserTest"/>
+            <class name="com.saucedemo.tests.user.LockedOutUserTest"/>
+            <class name="com.saucedemo.tests.user.ProblemUserTest"/>
+            <class name="com.saucedemo.tests.user.PerformanceGlitchUserTest"/>
+            <class name="com.saucedemo.tests.user.ErrorUserTest"/>
+            <class name="com.saucedemo.tests.user.VisualUserTest"/>
+        </classes>
+    </test>
+</suite>
