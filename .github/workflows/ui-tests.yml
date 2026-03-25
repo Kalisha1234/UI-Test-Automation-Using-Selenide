@@ -43,11 +43,12 @@ jobs:
     
     - name: Deploy Allure Report to GitHub Pages
       if: always()
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: target/site/allure-maven-plugin
         destination_dir: allure-report-${{ github.run_number }}
+        keep_files: true
     
     - name: Upload Allure Results
       if: always()
@@ -115,7 +116,8 @@ jobs:
         echo "- [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
     
     - name: Send Slack Notification
-      if: always() && steps.test-results.outputs.total != '0'
+      if: always() && steps.test-results.outputs.total != '0' && secrets.SLACK_WEBHOOK_URL != ''
+      continue-on-error: true
       uses: slackapi/slack-github-action@v1.24.0
       with:
         payload: |
@@ -209,7 +211,8 @@ jobs:
         SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
     
     - name: Send Email Notification
-      if: always() && steps.test-results.outputs.total != '0'
+      if: always() && steps.test-results.outputs.total != '0' && secrets.EMAIL_USERNAME != ''
+      continue-on-error: true
       uses: dawidd6/action-send-mail@v3
       with:
         server_address: smtp.gmail.com

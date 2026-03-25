@@ -40,8 +40,4 @@ public class BaseTest {
         }
         return sb.toString();
     }
-    
-    protected void maximizeWindow() {
-        getWebDriver().manage().window().maximize();
-    }
 }
