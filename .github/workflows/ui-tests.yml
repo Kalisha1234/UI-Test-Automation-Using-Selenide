@@ -116,7 +116,7 @@ jobs:
         echo "- [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
     
     - name: Send Slack Notification
-      if: always() && steps.test-results.outputs.total != '0' && secrets.SLACK_WEBHOOK_URL != ''
+      if: always() && steps.test-results.outputs.total != '0'
       continue-on-error: true
       uses: slackapi/slack-github-action@v1.24.0
       with:
@@ -211,7 +211,7 @@ jobs:
         SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
     
     - name: Send Email Notification
-      if: always() && steps.test-results.outputs.total != '0' && secrets.EMAIL_USERNAME != ''
+      if: always() && steps.test-results.outputs.total != '0'
       continue-on-error: true
       uses: dawidd6/action-send-mail@v3
       with:
