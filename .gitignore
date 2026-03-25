@@ -8,7 +8,7 @@ target/
 allure-results/
 allure-report/
 test-output/
-screenshots/
+build/reports/tests/
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
