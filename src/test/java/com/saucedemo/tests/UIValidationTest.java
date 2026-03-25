@@ -19,7 +19,7 @@ public class UIValidationTest extends BaseTest {
     private ProductsPage productsPage;
     
     @BeforeMethod
-    public void setup() {
+    public void setupTest() {
         LoginPage loginPage = new LoginPage();
         productsPage = loginPage.openPage(TestDataReader.getAppUrl())
                 .login(TestDataReader.getStandardUsername(), TestDataReader.getStandardPassword());
