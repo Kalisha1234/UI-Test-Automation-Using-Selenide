@@ -75,25 +75,41 @@ jobs:
       if: always()
       id: test-results
       run: |
+        echo "Checking for test report files..."
+        ls -la target/surefire-reports/ || echo "Surefire reports directory not found"
+        
+        echo "Looking for .txt files..."
         if ls target/surefire-reports/*.txt 1> /dev/null 2>&1; then
+          echo "Found .txt files, parsing..."
+          cat target/surefire-reports/*.txt
           TOTAL=$(grep -oP 'Tests run: \K[0-9]+' target/surefire-reports/*.txt 2>/dev/null | head -1 || echo "0")
           FAILURES=$(grep -oP 'Failures: \K[0-9]+' target/surefire-reports/*.txt 2>/dev/null | head -1 || echo "0")
           ERRORS=$(grep -oP 'Errors: \K[0-9]+' target/surefire-reports/*.txt 2>/dev/null | head -1 || echo "0")
           SKIPPED=$(grep -oP 'Skipped: \K[0-9]+' target/surefire-reports/*.txt 2>/dev/null | head -1 || echo "0")
+          echo "Parsed from TXT: Total=$TOTAL, Failures=$FAILURES, Errors=$ERRORS, Skipped=$SKIPPED"
         else
-          echo "No test report files found, checking XML reports..."
-          if ls target/surefire-reports/*.xml 1> /dev/null 2>&1; then
-            TOTAL=$(grep -oP 'tests="\K[0-9]+' target/surefire-reports/*.xml 2>/dev/null | head -1 || echo "0")
-            FAILURES=$(grep -oP 'failures="\K[0-9]+' target/surefire-reports/*.xml 2>/dev/null | head -1 || echo "0")
-            ERRORS=$(grep -oP 'errors="\K[0-9]+' target/surefire-reports/*.xml 2>/dev/null | head -1 || echo "0")
-            SKIPPED=$(grep -oP 'skipped="\K[0-9]+' target/surefire-reports/*.xml 2>/dev/null | head -1 || echo "0")
+          echo "No .txt files found, checking XML reports..."
+          if ls target/surefire-reports/TEST-*.xml 1> /dev/null 2>&1; then
+            echo "Found XML files, parsing..."
+            TOTAL=$(grep -oP 'tests="\K[0-9]+' target/surefire-reports/TEST-*.xml 2>/dev/null | awk '{s+=$1} END {print s}' || echo "0")
+            FAILURES=$(grep -oP 'failures="\K[0-9]+' target/surefire-reports/TEST-*.xml 2>/dev/null | awk '{s+=$1} END {print s}' || echo "0")
+            ERRORS=$(grep -oP 'errors="\K[0-9]+' target/surefire-reports/TEST-*.xml 2>/dev/null | awk '{s+=$1} END {print s}' || echo "0")
+            SKIPPED=$(grep -oP 'skipped="\K[0-9]+' target/surefire-reports/TEST-*.xml 2>/dev/null | awk '{s+=$1} END {print s}' || echo "0")
+            echo "Parsed from XML: Total=$TOTAL, Failures=$FAILURES, Errors=$ERRORS, Skipped=$SKIPPED"
           else
+            echo "No test reports found!"
             TOTAL=0
             FAILURES=0
             ERRORS=0
             SKIPPED=0
           fi
         fi
+        
+        # Ensure values are numbers
+        TOTAL=${TOTAL:-0}
+        FAILURES=${FAILURES:-0}
+        ERRORS=${ERRORS:-0}
+        SKIPPED=${SKIPPED:-0}
         
         PASSED=$((TOTAL - FAILURES - ERRORS - SKIPPED))
         
@@ -103,14 +119,14 @@ jobs:
           PASS_RATE=$(awk "BEGIN {printf \"%.2f\", ($PASSED/$TOTAL)*100}")
         fi
         
+        echo "Final Results: Total=$TOTAL, Passed=$PASSED, Failed=$FAILURES, Errors=$ERRORS, Skipped=$SKIPPED, Pass Rate=$PASS_RATE%"
+        
         echo "total=$TOTAL" >> $GITHUB_OUTPUT
         echo "passed=$PASSED" >> $GITHUB_OUTPUT
         echo "failures=$FAILURES" >> $GITHUB_OUTPUT
         echo "errors=$ERRORS" >> $GITHUB_OUTPUT
         echo "skipped=$SKIPPED" >> $GITHUB_OUTPUT
         echo "pass_rate=$PASS_RATE" >> $GITHUB_OUTPUT
-        
-        echo "Test Results: Total=$TOTAL, Passed=$PASSED, Failed=$FAILURES, Errors=$ERRORS, Skipped=$SKIPPED, Pass Rate=$PASS_RATE%"
     
     - name: Create Test Summary
       if: always()
