@@ -75,16 +75,24 @@ jobs:
       if: always()
       id: test-results
       run: |
-        if [ -f target/surefire-reports/*.txt ]; then
-          TOTAL=$(grep -oP 'Tests run: \K[0-9]+' target/surefire-reports/*.txt | head -1 || echo "0")
-          FAILURES=$(grep -oP 'Failures: \K[0-9]+' target/surefire-reports/*.txt | head -1 || echo "0")
-          ERRORS=$(grep -oP 'Errors: \K[0-9]+' target/surefire-reports/*.txt | head -1 || echo "0")
-          SKIPPED=$(grep -oP 'Skipped: \K[0-9]+' target/surefire-reports/*.txt | head -1 || echo "0")
+        if ls target/surefire-reports/*.txt 1> /dev/null 2>&1; then
+          TOTAL=$(grep -oP 'Tests run: \K[0-9]+' target/surefire-reports/*.txt 2>/dev/null | head -1 || echo "0")
+          FAILURES=$(grep -oP 'Failures: \K[0-9]+' target/surefire-reports/*.txt 2>/dev/null | head -1 || echo "0")
+          ERRORS=$(grep -oP 'Errors: \K[0-9]+' target/surefire-reports/*.txt 2>/dev/null | head -1 || echo "0")
+          SKIPPED=$(grep -oP 'Skipped: \K[0-9]+' target/surefire-reports/*.txt 2>/dev/null | head -1 || echo "0")
         else
-          TOTAL=0
-          FAILURES=0
-          ERRORS=0
-          SKIPPED=0
+          echo "No test report files found, checking XML reports..."
+          if ls target/surefire-reports/*.xml 1> /dev/null 2>&1; then
+            TOTAL=$(grep -oP 'tests="\K[0-9]+' target/surefire-reports/*.xml 2>/dev/null | head -1 || echo "0")
+            FAILURES=$(grep -oP 'failures="\K[0-9]+' target/surefire-reports/*.xml 2>/dev/null | head -1 || echo "0")
+            ERRORS=$(grep -oP 'errors="\K[0-9]+' target/surefire-reports/*.xml 2>/dev/null | head -1 || echo "0")
+            SKIPPED=$(grep -oP 'skipped="\K[0-9]+' target/surefire-reports/*.xml 2>/dev/null | head -1 || echo "0")
+          else
+            TOTAL=0
+            FAILURES=0
+            ERRORS=0
+            SKIPPED=0
+          fi
         fi
         
         PASSED=$((TOTAL - FAILURES - ERRORS - SKIPPED))
@@ -101,6 +109,8 @@ jobs:
         echo "errors=$ERRORS" >> $GITHUB_OUTPUT
         echo "skipped=$SKIPPED" >> $GITHUB_OUTPUT
         echo "pass_rate=$PASS_RATE" >> $GITHUB_OUTPUT
+        
+        echo "Test Results: Total=$TOTAL, Passed=$PASSED, Failed=$FAILURES, Errors=$ERRORS, Skipped=$SKIPPED, Pass Rate=$PASS_RATE%"
     
     - name: Create Test Summary
       if: always()
@@ -121,7 +131,7 @@ jobs:
         echo "- [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
     
     - name: Send Slack Notification
-      if: always() && steps.test-results.outputs.total != '0'
+      if: always()
       continue-on-error: true
       uses: slackapi/slack-github-action@v1.24.0
       with:
@@ -216,7 +226,7 @@ jobs:
         SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
     
     - name: Send Email Notification
-      if: always() && steps.test-results.outputs.total != '0'
+      if: always()
       continue-on-error: true
       uses: dawidd6/action-send-mail@v3
       with:
