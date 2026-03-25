@@ -77,15 +77,23 @@ jobs:
       run: |
         echo "=== Checking for test report files ==="
         ls -la target/surefire-reports/ 2>/dev/null || echo "Surefire reports directory not found"
+        ls -la test-output/ 2>/dev/null || echo "test-output directory not found"
         
-        echo "\n=== Checking test-classes directory ==="
-        find target/test-classes -name "*.class" 2>/dev/null | head -5 || echo "No test classes found"
-        
-        # Try to get summary from Maven output
-        echo "\n=== Looking for TestNG results XML ==="
-        if [ -f target/surefire-reports/testng-results.xml ]; then
-          echo "Found testng-results.xml"
-          cat target/surefire-reports/testng-results.xml | grep -E '<testng-results|total=|passed=|failed=|skipped=' | head -10
+        # Try TestNG results first (in test-output or surefire-reports)
+        if [ -f test-output/testng-results.xml ]; then
+          echo "Found test-output/testng-results.xml"
+          cat test-output/testng-results.xml | grep -E '<testng-results' | head -5
+          
+          TOTAL=$(grep -oP 'total="\K[0-9]+' test-output/testng-results.xml | head -1 || echo "0")
+          PASSED=$(grep -oP 'passed="\K[0-9]+' test-output/testng-results.xml | head -1 || echo "0")
+          FAILURES=$(grep -oP 'failed="\K[0-9]+' test-output/testng-results.xml | head -1 || echo "0")
+          SKIPPED=$(grep -oP 'skipped="\K[0-9]+' test-output/testng-results.xml | head -1 || echo "0")
+          ERRORS=0
+          
+          echo "Parsed from test-output/testng-results.xml: Total=$TOTAL, Passed=$PASSED, Failed=$FAILURES, Skipped=$SKIPPED"
+        elif [ -f target/surefire-reports/testng-results.xml ]; then
+          echo "Found target/surefire-reports/testng-results.xml"
+          cat target/surefire-reports/testng-results.xml | grep -E '<testng-results' | head -5
           
           TOTAL=$(grep -oP 'total="\K[0-9]+' target/surefire-reports/testng-results.xml | head -1 || echo "0")
           PASSED=$(grep -oP 'passed="\K[0-9]+' target/surefire-reports/testng-results.xml | head -1 || echo "0")
@@ -93,7 +101,7 @@ jobs:
           SKIPPED=$(grep -oP 'skipped="\K[0-9]+' target/surefire-reports/testng-results.xml | head -1 || echo "0")
           ERRORS=0
           
-          echo "Parsed from testng-results.xml: Total=$TOTAL, Passed=$PASSED, Failed=$FAILURES, Skipped=$SKIPPED"
+          echo "Parsed from target/surefire-reports/testng-results.xml: Total=$TOTAL, Passed=$PASSED, Failed=$FAILURES, Skipped=$SKIPPED"
         elif ls target/surefire-reports/*.txt 1> /dev/null 2>&1; then
           echo "Found .txt files"
           cat target/surefire-reports/*.txt | head -20
@@ -107,7 +115,7 @@ jobs:
           echo "Parsed from TXT: Total=$TOTAL, Passed=$PASSED, Failed=$FAILURES, Errors=$ERRORS, Skipped=$SKIPPED"
         elif ls target/surefire-reports/TEST-*.xml 1> /dev/null 2>&1; then
           echo "Found JUnit XML files"
-          ls target/surefire-reports/TEST-*.xml
+          ls target/surefire-reports/TEST-*.xml | head -5
           
           TOTAL=$(grep -oP 'tests="\K[0-9]+' target/surefire-reports/TEST-*.xml | awk '{s+=$1} END {print s+0}')
           FAILURES=$(grep -oP 'failures="\K[0-9]+' target/surefire-reports/TEST-*.xml | awk '{s+=$1} END {print s+0}')
