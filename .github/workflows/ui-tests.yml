@@ -69,12 +69,25 @@ jobs:
       if: always()
       id: test-results
       run: |
-        TOTAL=$(grep -oP 'Tests run: \K[0-9]+' target/surefire-reports/*.txt | head -1 || echo "0")
-        FAILURES=$(grep -oP 'Failures: \K[0-9]+' target/surefire-reports/*.txt | head -1 || echo "0")
-        ERRORS=$(grep -oP 'Errors: \K[0-9]+' target/surefire-reports/*.txt | head -1 || echo "0")
-        SKIPPED=$(grep -oP 'Skipped: \K[0-9]+' target/surefire-reports/*.txt | head -1 || echo "0")
+        if [ -f target/surefire-reports/*.txt ]; then
+          TOTAL=$(grep -oP 'Tests run: \K[0-9]+' target/surefire-reports/*.txt | head -1 || echo "0")
+          FAILURES=$(grep -oP 'Failures: \K[0-9]+' target/surefire-reports/*.txt | head -1 || echo "0")
+          ERRORS=$(grep -oP 'Errors: \K[0-9]+' target/surefire-reports/*.txt | head -1 || echo "0")
+          SKIPPED=$(grep -oP 'Skipped: \K[0-9]+' target/surefire-reports/*.txt | head -1 || echo "0")
+        else
+          TOTAL=0
+          FAILURES=0
+          ERRORS=0
+          SKIPPED=0
+        fi
+        
         PASSED=$((TOTAL - FAILURES - ERRORS - SKIPPED))
-        PASS_RATE=$(awk "BEGIN {printf \"%.2f\", ($PASSED/$TOTAL)*100}")
+        
+        if [ "$TOTAL" -eq 0 ]; then
+          PASS_RATE="0.00"
+        else
+          PASS_RATE=$(awk "BEGIN {printf \"%.2f\", ($PASSED/$TOTAL)*100}")
+        fi
         
         echo "total=$TOTAL" >> $GITHUB_OUTPUT
         echo "passed=$PASSED" >> $GITHUB_OUTPUT
@@ -102,7 +115,7 @@ jobs:
         echo "- [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
     
     - name: Send Slack Notification
-      if: always()
+      if: always() && steps.test-results.outputs.total != '0'
       uses: slackapi/slack-github-action@v1.24.0
       with:
         payload: |
@@ -112,7 +125,7 @@ jobs:
                 "type": "header",
                 "text": {
                   "type": "plain_text",
-                  "text": "${{ steps.tests.outputs.test_result == '0' && '✅' || '❌' }} UI Test Automation Results"
+                  "text": "${{ steps.test-results.outputs.failures == '0' && '✅' || '❌' }} UI Test Automation Results"
                 }
               },
               {
@@ -132,28 +145,38 @@ jobs:
                   },
                   {
                     "type": "mrkdwn",
-                    "text": "*Workflow:*\n${{ github.workflow }}"
+                    "text": "*Run:*\n#${{ github.run_number }}"
                   }
                 ]
+              },
+              {
+                "type": "divider"
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Test Results Summary*"
+                }
               },
               {
                 "type": "section",
                 "fields": [
                   {
                     "type": "mrkdwn",
-                    "text": "*Total Tests:* ${{ steps.test-results.outputs.total }}"
+                    "text": "*Total Tests:*\n${{ steps.test-results.outputs.total }}"
                   },
                   {
                     "type": "mrkdwn",
-                    "text": "*Passed:* ✅ ${{ steps.test-results.outputs.passed }}"
+                    "text": "*Passed:*\n✅ ${{ steps.test-results.outputs.passed }}"
                   },
                   {
                     "type": "mrkdwn",
-                    "text": "*Failed:* ❌ ${{ steps.test-results.outputs.failures }}"
+                    "text": "*Failed:*\n❌ ${{ steps.test-results.outputs.failures }}"
                   },
                   {
                     "type": "mrkdwn",
-                    "text": "*Pass Rate:* 📊 ${{ steps.test-results.outputs.pass_rate }}%"
+                    "text": "*Pass Rate:*\n📊 ${{ steps.test-results.outputs.pass_rate }}%"
                   }
                 ]
               },
@@ -164,15 +187,16 @@ jobs:
                     "type": "button",
                     "text": {
                       "type": "plain_text",
-                      "text": "View Allure Report"
+                      "text": "📊 View Allure Report"
                     },
-                    "url": "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/allure-report-${{ github.run_number }}"
+                    "url": "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/allure-report-${{ github.run_number }}",
+                    "style": "primary"
                   },
                   {
                     "type": "button",
                     "text": {
                       "type": "plain_text",
-                      "text": "View Workflow"
+                      "text": "🔍 View Workflow"
                     },
                     "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   }
@@ -185,7 +209,7 @@ jobs:
         SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
     
     - name: Send Email Notification
-      if: always()
+      if: always() && steps.test-results.outputs.total != '0'
       uses: dawidd6/action-send-mail@v3
       with:
         server_address: smtp.gmail.com
@@ -200,54 +224,76 @@ jobs:
           <html>
           <head>
             <style>
-              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
               .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-              .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 5px; }
-              .content { background: #f4f4f4; padding: 20px; margin-top: 20px; border-radius: 5px; }
-              .stats { display: table; width: 100%; margin: 20px 0; }
-              .stat { display: table-cell; text-align: center; padding: 15px; background: white; border-radius: 5px; margin: 5px; }
-              .stat-value { font-size: 24px; font-weight: bold; }
+              .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 20px; border-radius: 8px; text-align: center; }
+              .header h1 { margin: 0; font-size: 28px; }
+              .header p { margin: 5px 0; opacity: 0.9; }
+              .content { background: #f8f9fa; padding: 30px 20px; margin-top: 20px; border-radius: 8px; }
+              .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px 0; }
+              .stat-card { background: white; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+              .stat-value { font-size: 36px; font-weight: bold; margin: 10px 0; }
+              .stat-label { color: #666; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
               .passed { color: #28a745; }
               .failed { color: #dc3545; }
-              .button { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; margin: 10px 5px; }
-              .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+              .total { color: #007bff; }
+              .rate { color: #17a2b8; }
+              .buttons { text-align: center; margin-top: 30px; }
+              .button { display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 6px; margin: 5px; font-weight: bold; }
+              .button:hover { background: #5568d3; }
+              .footer { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 12px; }
+              .info-row { margin: 10px 0; padding: 10px; background: white; border-radius: 6px; }
+              .info-label { font-weight: bold; color: #667eea; }
             </style>
           </head>
           <body>
             <div class="container">
               <div class="header">
                 <h1>🧪 UI Test Automation Results</h1>
-                <p><strong>Repository:</strong> ${{ github.repository }}</p>
-                <p><strong>Branch:</strong> ${{ github.ref_name }}</p>
-                <p><strong>Triggered by:</strong> ${{ github.actor }}</p>
+                <p>Test execution completed</p>
               </div>
+              
               <div class="content">
-                <h2>Test Summary</h2>
-                <div class="stats">
-                  <div class="stat">
-                    <div class="stat-value">${{ steps.test-results.outputs.total }}</div>
-                    <div>Total Tests</div>
+                <div class="info-row">
+                  <span class="info-label">Repository:</span> ${{ github.repository }}
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Branch:</span> ${{ github.ref_name }}
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Triggered by:</span> ${{ github.actor }}
+                </div>
+                
+                <h2 style="text-align: center; margin-top: 30px;">Test Summary</h2>
+                
+                <div class="stats-grid">
+                  <div class="stat-card">
+                    <div class="stat-label">Total Tests</div>
+                    <div class="stat-value total">${{ steps.test-results.outputs.total }}</div>
                   </div>
-                  <div class="stat">
-                    <div class="stat-value passed">${{ steps.test-results.outputs.passed }}</div>
-                    <div>Passed</div>
+                  <div class="stat-card">
+                    <div class="stat-label">Passed</div>
+                    <div class="stat-value passed">✓ ${{ steps.test-results.outputs.passed }}</div>
                   </div>
-                  <div class="stat">
-                    <div class="stat-value failed">${{ steps.test-results.outputs.failures }}</div>
-                    <div>Failed</div>
+                  <div class="stat-card">
+                    <div class="stat-label">Failed</div>
+                    <div class="stat-value failed">✗ ${{ steps.test-results.outputs.failures }}</div>
                   </div>
-                  <div class="stat">
-                    <div class="stat-value">${{ steps.test-results.outputs.pass_rate }}%</div>
-                    <div>Pass Rate</div>
+                  <div class="stat-card">
+                    <div class="stat-label">Pass Rate</div>
+                    <div class="stat-value rate">${{ steps.test-results.outputs.pass_rate }}%</div>
                   </div>
                 </div>
-                <div style="text-align: center;">
-                  <a href="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/allure-report-${{ github.run_number }}" class="button">View Allure Report</a>
-                  <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" class="button">View Workflow</a>
+                
+                <div class="buttons">
+                  <a href="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/allure-report-${{ github.run_number }}" class="button">📊 View Allure Report</a>
+                  <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" class="button">🔍 View Workflow</a>
                 </div>
               </div>
+              
               <div class="footer">
                 <p>This is an automated message from GitHub Actions</p>
+                <p>Run #${{ github.run_number }} • ${{ github.workflow }}</p>
               </div>
             </div>
           </body>

@@ -25,6 +25,7 @@ public class CheckoutPageTest extends BaseTest {
         
         productsPage.addProductToCart("sauce-labs-backpack");
         CartPage cartPage = productsPage.openCart();
+        try { Thread.sleep(500); } catch (InterruptedException e) {}
         checkoutPage = cartPage.proceedToCheckout();
     }
     
