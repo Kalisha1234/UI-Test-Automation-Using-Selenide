@@ -1,10 +1,10 @@
 # 🧪 UI Test Automation Using Selenide
 
 [![UI Test Automation](https://github.com/Kalisha1234/UI-Test-Automation-Using-Selenide/actions/workflows/ui-tests.yml/badge.svg)](https://github.com/Kalisha1234/UI-Test-Automation-Using-Selenide/actions/workflows/ui-tests.yml)
-[![Java](https://img.shields.io/badge/Java-11-orange.svg)](https://www.oracle.com/java/)
+[![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://www.oracle.com/java/)
 [![Selenide](https://img.shields.io/badge/Selenide-7.0.4-green.svg)](https://selenide.org/)
 [![TestNG](https://img.shields.io/badge/TestNG-7.8.0-red.svg)](https://testng.org/)
-[![Allure](https://img.shields.io/badge/Allure-2.20.1-blue.svg)](https://docs.qameta.io/allure/)
+[![Allure](https://img.shields.io/badge/Allure-2.24.0-blue.svg)](https://docs.qameta.io/allure/)
 
 A comprehensive UI test automation framework for [Sauce Demo](https://www.saucedemo.com/) using Selenide, TestNG, and Allure reporting with CI/CD integration.
 
@@ -40,11 +40,11 @@ A comprehensive UI test automation framework for [Sauce Demo](https://www.sauced
 
 | Technology | Version | Purpose |
 |------------|---------|---------|
-| Java | 11 | Programming Language |
+| Java | 17 | Programming Language |
 | Maven | 3.9+ | Build Tool |
 | Selenide | 7.0.4 | UI Testing Framework |
 | TestNG | 7.8.0 | Test Framework |
-| Allure | 2.20.1 | Reporting |
+| Allure | 2.24.0 | Reporting |
 | Docker | Latest | Containerization |
 | GitHub Actions | - | CI/CD |
 
@@ -105,7 +105,7 @@ UI-Test-Automation-Using-Selenide/
 
 ## 📦 Prerequisites
 
-- **Java JDK 11** or higher
+- **Java JDK 17** or higher
 - **Maven 3.9+**
 - **Chrome Browser** (latest version)
 - **Git**
