@@ -1,0 +1,1 @@
+Cart should contain 1 item after removal expected [1] but found [2]
