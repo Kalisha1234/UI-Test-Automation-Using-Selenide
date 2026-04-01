@@ -28,4 +28,29 @@
             <class name="com.saucedemo.tests.CheckoutPageTest"/>
         </classes>
     </test>
+    <test name="Sorting Tests">
+        <classes>
+            <class name="com.saucedemo.tests.SortingTest"/>
+        </classes>
+    </test>
+    <test name="Navigation Tests">
+        <classes>
+            <class name="com.saucedemo.tests.NavigationTest"/>
+        </classes>
+    </test>
+    <test name="Security Tests">
+        <classes>
+            <class name="com.saucedemo.tests.SecurityTest"/>
+        </classes>
+    </test>
+    <test name="UI Validation Tests">
+        <classes>
+            <class name="com.saucedemo.tests.UIValidationTest"/>
+        </classes>
+    </test>
+    <test name="Edge Case Tests">
+        <classes>
+            <class name="com.saucedemo.tests.EdgeCaseTest"/>
+        </classes>
+    </test>
 </suite>
