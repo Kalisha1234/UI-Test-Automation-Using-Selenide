@@ -3,7 +3,6 @@ package com.saucedemo.pages;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import java.time.Duration;
 import static com.codeborne.selenide.Selenide.$;
 
 public class CheckoutPage {
@@ -20,7 +19,7 @@ public class CheckoutPage {
     
     @Step("Fill checkout information")
     public CheckoutPage fillInformation(String firstName, String lastName, String postalCode) {
-        firstNameField.shouldBe(Condition.visible, Duration.ofSeconds(10)).setValue(firstName);
+        firstNameField.shouldBe(Condition.visible).setValue(firstName);
         lastNameField.shouldBe(Condition.visible).setValue(lastName);
         postalCodeField.shouldBe(Condition.visible).setValue(postalCode);
         return this;
@@ -39,13 +38,13 @@ public class CheckoutPage {
     
     @Step("Finish checkout")
     public CheckoutPage finishCheckout() {
-        finishButton.shouldBe(Condition.enabled, Duration.ofSeconds(10)).click();
+        finishButton.shouldBe(Condition.enabled).click();
         return this;
     }
     
     @Step("Get completion message")
     public String getCompletionMessage() {
-        return completeHeader.shouldBe(Condition.visible, Duration.ofSeconds(10)).getText();
+        return completeHeader.shouldBe(Condition.visible).getText();
     }
     
     @Step("Cancel checkout")
@@ -62,7 +61,7 @@ public class CheckoutPage {
     @Step("Verify error is displayed")
     public boolean isErrorDisplayed() {
         try {
-            return errorMessage.is(Condition.visible, Duration.ofSeconds(2));
+            return errorMessage.is(Condition.visible);
         } catch (Exception e) {
             return false;
         }

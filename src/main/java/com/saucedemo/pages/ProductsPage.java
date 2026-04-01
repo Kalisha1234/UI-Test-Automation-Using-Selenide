@@ -4,7 +4,6 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import java.time.Duration;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
@@ -22,7 +21,7 @@ public class ProductsPage {
     
     @Step("Add product to cart: {productName}")
     public ProductsPage addProductToCart(String productName) {
-        $("[data-test='add-to-cart-" + productName.toLowerCase().replace(" ", "-") + "']").shouldBe(Condition.enabled, Duration.ofSeconds(10)).click();
+        $("[data-test='add-to-cart-" + productName.toLowerCase().replace(" ", "-") + "']").shouldBe(Condition.enabled).click();
         return this;
     }
     

@@ -3,7 +3,6 @@ package com.saucedemo.pages;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import java.time.Duration;
 import static com.codeborne.selenide.Selenide.$;
 
 public class ProductDetailsPage {
@@ -22,7 +21,7 @@ public class ProductDetailsPage {
     
     @Step("Get product price")
     public String getProductPrice() {
-        return productPrice.shouldBe(Condition.visible, Duration.ofSeconds(10)).getText();
+        return productPrice.shouldBe(Condition.visible).getText();
     }
     
     @Step("Get product description")
