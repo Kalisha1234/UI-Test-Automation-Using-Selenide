@@ -44,15 +44,43 @@ jobs:
     
     - name: Generate Allure Report
       if: always()
-      run: mvn allure:report
+      run: |
+        mvn allure:report
+        echo "Report generated at: target/site/allure-maven-plugin"
+        ls -la target/site/allure-maven-plugin/ || echo "Report directory not found"
+    
+    - name: Create index page for reports
+      if: always()
+      run: |
+        mkdir -p gh-pages
+        cat > gh-pages/index.html << 'EOF'
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Test Reports</title>
+          <meta http-equiv="refresh" content="0; url=./latest/index.html">
+        </head>
+        <body>
+          <p>Redirecting to latest report...</p>
+        </body>
+        </html>
+        EOF
+    
+    - name: Copy Allure Report
+      if: always()
+      run: |
+        mkdir -p gh-pages/latest
+        mkdir -p gh-pages/run-${{ github.run_number }}
+        cp -r target/site/allure-maven-plugin/* gh-pages/latest/ || echo "Failed to copy to latest"
+        cp -r target/site/allure-maven-plugin/* gh-pages/run-${{ github.run_number }}/ || echo "Failed to copy to run directory"
+        ls -la gh-pages/
     
     - name: Deploy Allure Report to GitHub Pages
       if: always()
       uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: target/site/allure-maven-plugin
-        destination_dir: allure-report-${{ github.run_number }}
+        publish_dir: gh-pages
         keep_files: true
     
     - name: Upload Allure Results
@@ -176,7 +204,8 @@ jobs:
         echo "| 📊 Pass Rate | ${{ steps.test-results.outputs.pass_rate }}% |" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "### 📄 Reports" >> $GITHUB_STEP_SUMMARY
-        echo "- [Allure Report](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/allure-report-${{ github.run_number }})" >> $GITHUB_STEP_SUMMARY
+        echo "- [Latest Allure Report](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/latest/)" >> $GITHUB_STEP_SUMMARY
+        echo "- [Run #${{ github.run_number }} Report](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/run-${{ github.run_number }}/)" >> $GITHUB_STEP_SUMMARY
         echo "- [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
     
     - name: Send Slack Notification
@@ -253,10 +282,18 @@ jobs:
                     "type": "button",
                     "text": {
                       "type": "plain_text",
-                      "text": "📊 View Allure Report"
+                      "text": "📊 View Latest Report"
                     },
-                    "url": "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/allure-report-${{ github.run_number }}",
+                    "url": "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/latest/",
                     "style": "primary"
+                  },
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "📋 Run #${{ github.run_number }}"
+                    },
+                    "url": "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/run-${{ github.run_number }}/"
                   },
                   {
                     "type": "button",
@@ -353,7 +390,8 @@ jobs:
                 </div>
                 
                 <div class="buttons">
-                  <a href="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/allure-report-${{ github.run_number }}" class="button">📊 View Allure Report</a>
+                  <a href="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/latest/" class="button">📊 View Latest Report</a>
+                  <a href="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/run-${{ github.run_number }}/" class="button">📋 Run #${{ github.run_number }}</a>
                   <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" class="button">🔍 View Workflow</a>
                 </div>
               </div>

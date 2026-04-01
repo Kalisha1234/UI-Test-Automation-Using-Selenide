@@ -61,6 +61,10 @@ public class CheckoutPage {
     
     @Step("Verify error is displayed")
     public boolean isErrorDisplayed() {
-        return errorMessage.is(Condition.visible);
+        try {
+            return errorMessage.is(Condition.visible, Duration.ofSeconds(2));
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
