@@ -1,0 +1,5 @@
+Element not found {#checkout}
+Expected: enabled
+Screenshot: file:/home/runner/work/UI-Test-Automation-Using-Selenide/UI-Test-Automation-Using-Selenide/build/reports/tests/1775526668941.7.png
+Timeout: 10 s.
+Caused by: NoSuchElementException: no such element: Unable to locate element: {"method":"css selector","selector":"#checkout"}
