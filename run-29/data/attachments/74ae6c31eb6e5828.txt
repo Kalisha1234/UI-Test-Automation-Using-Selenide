@@ -1,0 +1,1 @@
+Cart should contain all 6 products expected [6] but found [1]
