@@ -1,0 +1,1 @@
+Cart should show 3 items expected [3] but found [2]
