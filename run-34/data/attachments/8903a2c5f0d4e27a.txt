@@ -1,0 +1,1 @@
+Cart badge should show 2 items expected [2] but found [1]
