@@ -1,0 +1,5 @@
+Element should have text "2024" {.footer_copy}
+Element: '<div class="footer_copy" data-test="footer-copy">© 2026 Sauce Labs. All Rights Reserved. Terms of Service | Privacy Policy</div>'
+Actual value: text="© 2026 Sauce Labs. All Rights Reserved. Terms of Service | Privacy Policy"
+Screenshot: file:/home/runner/work/UI-Test-Automation-Using-Selenide/UI-Test-Automation-Using-Selenide/build/reports/tests/1775959166852.14.png
+Timeout: 10 s.
