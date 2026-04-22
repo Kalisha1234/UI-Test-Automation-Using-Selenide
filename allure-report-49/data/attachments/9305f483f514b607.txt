@@ -1,0 +1,8 @@
+Element should not be visible {.bm-menu}
+Element: '<div class="bm-menu">All Items
+About
+Logout
+Reset App State</div>'
+Actual value: visible
+Screenshot: file:/home/runner/work/UI-Test-Automation-Using-Selenide/UI-Test-Automation-Using-Selenide/build/reports/tests/1776823172070.17.png
+Timeout: 10 s.
