@@ -1,0 +1,1 @@
+Rapid clicking should not add multiple items expected [1] but found [0]
