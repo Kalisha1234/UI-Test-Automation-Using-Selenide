@@ -1,399 +1,381 @@
-# 🧪 UI Test Automation Using Selenide
+# UI Test Automation Using Selenide
 
-[![UI Test Automation](https://github.com/Kalisha1234/UI-Test-Automation-Using-Selenide/actions/workflows/ui-tests.yml/badge.svg)](https://github.com/Kalisha1234/UI-Test-Automation-Using-Selenide/actions/workflows/ui-tests.yml)
-[![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://www.oracle.com/java/)
-[![Selenide](https://img.shields.io/badge/Selenide-7.0.4-green.svg)](https://selenide.org/)
-[![TestNG](https://img.shields.io/badge/TestNG-7.8.0-red.svg)](https://testng.org/)
-[![Allure](https://img.shields.io/badge/Allure-2.24.0-blue.svg)](https://docs.qameta.io/allure/)
+## Project Overview
+This project demonstrates automated UI testing using **Selenide**, a powerful framework built on top of Selenium. It validates core functionalities of the Swag Labs web application including user login, product search, product details, cart functionality, and checkout processes. The project emphasizes simplicity, stability, and maintainability using Selenide's fluent API and concise syntax.
 
-A comprehensive UI test automation framework for [Sauce Demo](https://www.saucedemo.com/) using Selenide, TestNG, and Allure reporting with CI/CD integration.
+## Application Under Test
+**Swag Labs**: https://www.saucedemo.com/
+- User login and authentication
+- Product browsing and search
+- Product details page
+- Shopping cart functionality
+- Checkout process
 
-## 📋 Table of Contents
+## Technologies Used
+- **Java 17**
+- **Selenide 7.0.4** - UI automation framework
+- **TestNG 7.8.0** - Testing framework
+- **Allure 2.24.0** - Test reporting
+- **Maven** - Build and dependency management
+- **Docker** - Containerization
+- **GitHub Actions** - CI/CD pipeline
 
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Prerequisites](#-prerequisites)
-- [Installation](#-installation)
-- [Running Tests](#-running-tests)
-- [Test Coverage](#-test-coverage)
-- [Reporting](#-reporting)
-- [CI/CD](#-cicd)
-- [Docker Support](#-docker-support)
-- [Configuration](#-configuration)
-- [Contributing](#-contributing)
-
-## ✨ Features
-
-- ✅ **98 Comprehensive Test Cases** covering all major functionalities
-- 🎯 **Page Object Model (POM)** design pattern
-- 📊 **Allure Reports** with screenshots and detailed logs
-- 🔄 **CI/CD Integration** with GitHub Actions
-- 📧 **Email & Slack Notifications** for test results
-- 🐳 **Docker Support** for containerized execution
-- 🔐 **Security Testing** (SQL injection, XSS prevention)
-- 🎨 **UI/UX Validation** tests
-- ⚡ **Parallel Execution** support
-- 📈 **Multiple User Scenarios** (standard, problem, performance, visual users)
-
-## 🛠 Tech Stack
-
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| Java | 17 | Programming Language |
-| Maven | 3.9+ | Build Tool |
-| Selenide | 7.0.4 | UI Testing Framework |
-| TestNG | 7.8.0 | Test Framework |
-| Allure | 2.24.0 | Reporting |
-| Docker | Latest | Containerization |
-| GitHub Actions | - | CI/CD |
-
-## 📁 Project Structure
-
+## Project Structure
 ```
-UI-Test-Automation-Using-Selenide/
-├── .github/
-│   └── workflows/
-│       ├── ui-tests.yml          # CI/CD pipeline
-│       └── README.md             # CI/CD documentation
+UI Test Automation/
 ├── src/
-│   ├── main/java/
-│   │   └── com/saucedemo/pages/  # Page Object classes
-│   │       ├── LoginPage.java
-│   │       ├── ProductsPage.java
-│   │       ├── CartPage.java
-│   │       ├── CheckoutPage.java
-│   │       └── ProductDetailsPage.java
-│   └── test/java/
-│       └── com/saucedemo/
-│           ├── config/           # Test configuration
-│           │   ├── BaseTest.java
-│           │   └── DriverManager.java
-│           ├── tests/            # Test classes
-│           │   ├── LoginPageTest.java
-│           │   ├── ProductsPageTest.java
-│           │   ├── CartPageTest.java
-│           │   ├── CheckoutPageTest.java
-│           │   ├── SortingTest.java
-│           │   ├── NavigationTest.java
-│           │   ├── SecurityTest.java
-│           │   ├── UIValidationTest.java
-│           │   ├── EdgeCaseTest.java
-│           │   └── user/         # User-specific tests
-│           │       ├── StandardUserTest.java
-│           │       ├── ProblemUserTest.java
-│           │       ├── PerformanceGlitchUserTest.java
-│           │       ├── ErrorUserTest.java
-│           │       ├── VisualUserTest.java
-│           │       └── LockedOutUserTest.java
-│           └── utils/
-│               └── TestDataReader.java
+│   ├── main/java/com/saucedemo/
+│   │   ├── pages/              # Page Object Model classes
+│   │   │   ├── LoginPage.java
+│   │   │   ├── ProductsPage.java
+│   │   │   ├── ProductDetailsPage.java
+│   │   │   ├── CartPage.java
+│   │   │   └── CheckoutPage.java
+│   │   └── utils/
+│   │       └── TestDataReader.java
+│   └── test/java/com/saucedemo/
+│       ├── config/
+│       │   ├── BaseTest.java          # Base test configuration
+│       │   └── DriverManager.java     # Browser configuration
+│       └── tests/
+│           ├── LoginPageTest.java
+│           ├── ProductsPageTest.java
+│           ├── ProductDetailsPageTest.java
+│           ├── CartPageTest.java
+│           ├── CheckoutPageTest.java
+│           ├── SortingTest.java
+│           ├── NavigationTest.java
+│           ├── SecurityTest.java
+│           ├── UIValidationTest.java
+│           ├── EdgeCaseTest.java
+│           └── user/                  # User-specific tests
+│               ├── StandardUserTest.java
+│               ├── LockedOutUserTest.java
+│               ├── ProblemUserTest.java
+│               ├── PerformanceGlitchUserTest.java
+│               ├── ErrorUserTest.java
+│               └── VisualUserTest.java
 ├── src/test/resources/
-│   ├── testdata/
-│   │   └── testdata.properties   # Test data
+│   ├── testng.xml                     # Main test suite
 │   ├── suites/
-│   │   ├── smoke-suite.xml       # Smoke test suite
-│   │   └── regression-suite.xml  # Regression test suite
-│   ├── allure.properties         # Allure configuration
-│   └── testng.xml                # TestNG configuration
-├── docker-compose.yml            # Docker Compose configuration
-├── Dockerfile                    # Docker image definition
-├── pom.xml                       # Maven dependencies
-├── NOTIFICATION_SETUP.md         # Notification setup guide
-└── README.md                     # This file
+│   │   ├── smoke-suite.xml           # Smoke test suite
+│   │   └── regression-suite.xml      # Regression test suite
+│   └── config.properties
+├── .github/workflows/
+│   └── ui-tests.yml                  # GitHub Actions CI/CD
+├── Dockerfile
+├── docker-compose.yml
+└── pom.xml
 ```
 
-## 📦 Prerequisites
+## Key Features
 
-- **Java JDK 17** or higher
-- **Maven 3.9+**
-- **Chrome Browser** (latest version)
-- **Git**
-- **Docker** (optional, for containerized execution)
+### ✅ Page Object Model (POM)
+- Clean separation of page elements and test logic
+- Reusable page classes for maintainability
+- Selenide's fluent API for concise element interactions
 
-## 🚀 Installation
+### ✅ Selenide Features
+- **Automatic waits** - No explicit waits needed
+- **Smart assertions** - Built-in conditions and assertions
+- **Screenshot on failure** - Automatic screenshot capture
+- **Fluent API** - Readable and maintainable test code
 
-### 1. Clone the Repository
+### ✅ Test Suites
+1. **Smoke Test Suite** (`smoke-suite.xml`)
+   - Login functionality
+   - Product page display
+   - Quick validation tests
+   
+2. **Regression Test Suite** (`regression-suite.xml`)
+   - Full cart functionality
+   - Complete checkout process
+   - All user scenarios
+   - Comprehensive validation
 
+### ✅ Headless Browser Support
+- Chrome headless mode
+- Firefox headless mode
+- Configurable via system properties
+
+### ✅ Docker Support
+- Containerized test execution
+- Isolated test environment
+- Easy deployment and scaling
+
+### ✅ CI/CD Integration
+- GitHub Actions workflow
+- Automated test execution on every commit
+- Test result notifications (Slack & Email)
+- Allure report generation and deployment
+
+### ✅ Test Reporting
+- **Allure Reports** with detailed test execution data
+- Screenshots on test failures
+- Error messages and stack traces
+- Test execution history
+
+## Setup Instructions
+
+### Prerequisites
+- Java 17 or higher
+- Maven 3.6+
+- Chrome or Firefox browser
+- Docker (optional)
+
+### Installation
+
+1. **Clone the repository**
 ```bash
 git clone https://github.com/Kalisha1234/UI-Test-Automation-Using-Selenide.git
 cd UI-Test-Automation-Using-Selenide
 ```
 
-### 2. Install Dependencies
-
+2. **Install dependencies**
 ```bash
 mvn clean install -DskipTests
 ```
 
-### 3. Verify Installation
+3. **Configure test data** (Optional)
+Edit `src/test/resources/config.properties` to customize test configuration.
 
-```bash
-mvn --version
-java --version
-```
-
-## ▶️ Running Tests
+## Running Tests
 
 ### Run All Tests
-
 ```bash
 mvn clean test
 ```
 
-### Run Specific Test Suite
-
-```bash
-# Smoke Tests
-mvn clean test -DsuiteXmlFile=src/test/resources/suites/smoke-suite.xml
-
-# Regression Tests
-mvn clean test -DsuiteXmlFile=src/test/resources/suites/regression-suite.xml
-```
-
-### Run Specific Test Class
-
-```bash
-mvn clean test -Dtest=LoginPageTest
-```
-
 ### Run in Headless Mode
-
 ```bash
 mvn clean test -Dheadless=true
 ```
 
-### Run with Specific Browser
-
+### Run Specific Browser
 ```bash
-mvn clean test -Dbrowser=chrome
 mvn clean test -Dbrowser=firefox
+mvn clean test -Dbrowser=chrome
 ```
 
-## 🧪 Test Coverage
-
-### Total: 98 Test Cases
-
-| Category | Tests | Description |
-|----------|-------|-------------|
-| **Login Tests** | 8 | Valid/invalid login, locked users, error messages |
-| **Products Tests** | 6 | Product display, add to cart, remove from cart |
-| **Cart Tests** | 5 | Cart operations, item count, checkout navigation |
-| **Checkout Tests** | 6 | Checkout flow, validation, multiple products |
-| **Product Details** | 4 | Product information, navigation, cart operations |
-| **Sorting Tests** | 5 | A-Z, Z-A, price sorting, persistence |
-| **Navigation Tests** | 10 | Menu, links, logout, social media |
-| **Security Tests** | 10 | SQL injection, XSS, direct URL access |
-| **UI Validation** | 15 | Images, text, buttons, layout |
-| **Edge Cases** | 10 | Boundary conditions, rapid clicks |
-| **User Scenarios** | 19 | Standard, problem, performance, visual, error users |
-
-### Test Categories
-
-#### 🔐 Security Tests
-- SQL Injection prevention
-- XSS attack prevention
-- Direct URL access protection
-- Input validation (special characters, long strings)
-- Case sensitivity checks
-
-#### 🎨 UI/UX Tests
-- Element visibility
-- Image loading
-- Button states
-- Cart badge updates
-- Footer validation
-
-#### ⚡ Performance Tests
-- Performance glitch user scenarios
-- Page load times
-- Element wait strategies
-
-#### 🧩 Edge Cases
-- Add all products
-- Remove all products
-- Cart persistence
-- Rapid clicking
-- Navigation flows
-
-## 📊 Reporting
-
-### Allure Reports
-
-#### Generate Report Locally
-
+### Run Smoke Test Suite
 ```bash
-# Generate and open report
-mvn allure:serve
-
-# Generate report only
-mvn allure:report
+mvn clean test -DsuiteXmlFile=src/test/resources/suites/smoke-suite.xml
 ```
 
-#### View Report
+### Run Regression Test Suite
+```bash
+mvn clean test -DsuiteXmlFile=src/test/resources/suites/regression-suite.xml
+```
 
-Reports are generated in `target/site/allure-maven-plugin/`
+### Generate Allure Report
+```bash
+mvn allure:report
+mvn allure:serve
+```
 
-#### CI/CD Reports
-
-Allure reports are automatically deployed to GitHub Pages:
-- URL: `https://kalisha1234.github.io/UI-Test-Automation-Using-Selenide/allure-report-{run-number}`
-
-### Report Features
-
-- ✅ Test execution summary
-- 📸 Screenshots on failure
-- 📝 Step-by-step execution logs
-- 📊 Graphs and charts
-- 🏷️ Test categorization
-- ⏱️ Execution time tracking
-
-## 🔄 CI/CD
-
-### GitHub Actions Workflow
-
-The project includes a comprehensive CI/CD pipeline that:
-
-1. ✅ Runs on every push to `main`
-2. ✅ Runs on pull requests
-3. ✅ Scheduled daily runs (midnight UTC)
-4. ✅ Manual trigger support
-5. ✅ Deploys Allure reports to GitHub Pages
-6. ✅ Sends Slack notifications
-7. ✅ Sends email notifications
-
-### Workflow Features
-
-- **Automated Testing**: Runs all tests in headless mode
-- **Allure Reporting**: Generates and deploys reports
-- **Notifications**: Slack and email with test results
-- **Artifacts**: Stores test results for 30 days
-- **Summary**: Beautiful GitHub Actions summary
-
-### Setup Notifications
-
-See [NOTIFICATION_SETUP.md](NOTIFICATION_SETUP.md) for detailed instructions on:
-- Setting up Slack webhooks
-- Configuring Gmail app passwords
-- Adding GitHub secrets
-
-### Required GitHub Secrets
-
-| Secret | Description |
-|--------|-------------|
-| `SLACK_WEBHOOK_URL` | Slack incoming webhook URL |
-| `EMAIL_USERNAME` | Gmail address |
-| `EMAIL_PASSWORD` | Gmail app password |
-| `EMAIL_RECIPIENTS` | Comma-separated email addresses |
-
-## 🐳 Docker Support
+## Docker Execution
 
 ### Build Docker Image
-
 ```bash
 docker build -t ui-test-automation .
 ```
 
 ### Run Tests in Docker
+```bash
+docker run --rm ui-test-automation
+```
 
+### Using Docker Compose
 ```bash
 docker-compose up
 ```
 
-### Docker Compose
+## Test Coverage
 
-```bash
-# Run tests
-docker-compose up --abort-on-container-exit
+### Total Tests: 98
 
-# Clean up
-docker-compose down
+#### Login & Authentication (5 tests)
+- Successful login
+- Invalid username/password
+- Empty credentials
+- Locked out user
+
+#### Products & Navigation (16 tests)
+- Product listing
+- Product details
+- Sorting functionality
+- Navigation flows
+
+#### Cart & Checkout (11 tests)
+- Add/remove items
+- Cart validation
+- Checkout process
+- Form validation
+
+#### Security Tests (10 tests)
+- SQL injection prevention
+- XSS prevention
+- Direct URL access protection
+- Input validation
+
+#### UI Validation (15 tests)
+- Element visibility
+- Layout validation
+- Responsive design
+- Error messages
+
+#### User-Specific Tests (26 tests)
+- Standard user
+- Locked out user
+- Problem user
+- Performance glitch user
+- Error user
+- Visual user
+
+#### Edge Cases (10 tests)
+- Boundary conditions
+- Special characters
+- Long inputs
+- Empty states
+
+#### Additional Tests (5 tests)
+- Sorting functionality
+- Navigation patterns
+
+## CI/CD Pipeline
+
+### GitHub Actions Workflow
+The project includes a comprehensive CI/CD pipeline that:
+- ✅ Triggers on every push to main branch
+- ✅ Runs tests in headless Chrome
+- ✅ Generates Allure reports
+- ✅ Deploys reports to GitHub Pages
+- ✅ Sends notifications (Slack & Email)
+- ✅ Uploads test artifacts
+
+### Workflow Features
+- Automated test execution
+- Test result parsing
+- Pass rate calculation
+- Screenshot capture on failures
+- Detailed test summaries
+
+## Assertions & Waits
+
+### Selenide Automatic Waits
+```java
+// No explicit waits needed - Selenide handles it automatically
+$("#username").setValue("standard_user");
+$("#password").setValue("secret_sauce");
+$("#login-button").click();
+
+// Smart assertions with automatic retries
+$(".title").shouldHave(text("Products"));
+$(".inventory_item").shouldBe(visible);
 ```
 
-## ⚙️ Configuration
-
-### Test Data Configuration
-
-Edit `src/test/resources/testdata/testdata.properties`:
-
-```properties
-app.url=https://www.saucedemo.com
-standard.username=standard_user
-standard.password=secret_sauce
-checkout.firstname=John
-checkout.lastname=Doe
-checkout.postalcode=12345
+### Hard Assertions (TestNG)
+```java
+assertTrue(productsPage.isDisplayed(), "Products page should be displayed");
+assertEquals(cartPage.getCartItemsCount(), 1, "Cart should contain 1 item");
 ```
 
-### Browser Configuration
+### Soft Assertions
+```java
+// Selenide conditions act as soft assertions when chained
+$(".element").shouldBe(visible).shouldHave(text("Expected"));
+```
 
-Edit `src/test/java/com/saucedemo/config/DriverManager.java`:
+## Screenshot on Failures
+
+Screenshots are automatically captured on test failures:
+- **Selenide Configuration**: `Configuration.screenshots = true`
+- **Allure Integration**: Screenshots attached to Allure reports
+- **BaseTest**: Captures screenshot, error message, and stack trace
 
 ```java
-Configuration.browser = "chrome";
-Configuration.browserSize = "1920x1080";
-Configuration.headless = false;
-Configuration.timeout = 10000;
+@AfterMethod
+public void tearDown(ITestResult result) {
+    if (result.getStatus() == ITestResult.FAILURE) {
+        byte[] screenshot = ((TakesScreenshot) getWebDriver()).getScreenshotAs(OutputType.BYTES);
+        Allure.addAttachment("Failure Screenshot", "image/png", new ByteArrayInputStream(screenshot), "png");
+        Allure.addAttachment("Error Message", "text/plain", result.getThrowable().getMessage());
+        Allure.addAttachment("Stack Trace", "text/plain", getStackTrace(result.getThrowable()));
+    }
+}
 ```
 
-### TestNG Configuration
+## Configuration
 
-Edit `src/test/resources/testng.xml` for:
-- Parallel execution
-- Thread count
-- Test groups
-- Listeners
+### Browser Configuration (DriverManager.java)
+```java
+Configuration.browser = "chrome";           // Browser type
+Configuration.headless = false;             // Headless mode
+Configuration.browserSize = "1920x1080";    // Window size
+Configuration.timeout = 10000;              // Default timeout (10s)
+Configuration.screenshots = true;           // Enable screenshots
+```
 
-## 📈 Best Practices
+### System Properties
+- `-Dbrowser=chrome|firefox` - Browser selection
+- `-Dheadless=true|false` - Headless mode
+- `-DsuiteXmlFile=path/to/suite.xml` - Test suite selection
 
-This framework follows:
+## Best Practices Implemented
 
-- ✅ **Page Object Model** for maintainability
-- ✅ **DRY Principle** (Don't Repeat Yourself)
-- ✅ **SOLID Principles** in design
-- ✅ **Explicit Waits** over implicit waits
-- ✅ **Data-Driven Testing** with properties files
-- ✅ **Allure Annotations** for better reporting
-- ✅ **TestNG Groups** for test organization
-- ✅ **Error Handling** with screenshots
-- ✅ **Clean Code** practices
+1. **Page Object Model** - Clean separation of concerns
+2. **Selenide Fluent API** - Readable and maintainable code
+3. **Automatic Waits** - No explicit waits needed
+4. **Smart Assertions** - Built-in retry mechanism
+5. **Screenshot on Failure** - Automatic error capture
+6. **Allure Reporting** - Comprehensive test reports
+7. **Docker Support** - Isolated test environment
+8. **CI/CD Integration** - Automated testing pipeline
+9. **Test Suites** - Organized smoke and regression tests
+10. **Headless Execution** - Fast CI/CD execution
 
-## 🤝 Contributing
+## Troubleshooting
 
+### Common Issues
+
+**Issue**: Tests fail with "Element not found"
+**Solution**: Selenide automatically waits, but you can increase timeout:
+```java
+Configuration.timeout = 15000; // 15 seconds
+```
+
+**Issue**: Chrome driver version mismatch
+**Solution**: Selenide automatically downloads the correct driver version
+
+**Issue**: Tests fail in headless mode
+**Solution**: Some elements may behave differently in headless mode. Add explicit waits if needed:
+```java
+$(".element").shouldBe(visible, Duration.ofSeconds(10));
+```
+
+## Contributing
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
-## 📝 License
+## Project Requirements Checklist
 
-This project is licensed under the MIT License.
+✅ **Setup the automation project** - Maven project with all dependencies  
+✅ **Create Page Object classes** - 5 page classes (Login, Products, ProductDetails, Cart, Checkout)  
+✅ **Selenide based test cases** - 98 comprehensive tests  
+✅ **Implement assertions and waits** - Selenide automatic waits + TestNG assertions  
+✅ **Headless browser support** - Chrome & Firefox headless mode  
+✅ **Smoke test suite** - Login and product page tests  
+✅ **Regression test suite** - Cart and checkout functionality  
+✅ **Dockerize the project** - Dockerfile and docker-compose.yml  
+✅ **GitHub Actions CI/CD** - Automated tests on every commit  
+✅ **Screenshot on failures** - Automatic capture and Allure attachment  
+✅ **Generate report** - Allure reports with detailed test execution data  
 
-## 👥 Authors
+## License
+This project is created for educational purposes.
 
-- **Kalisha1234** - [GitHub Profile](https://github.com/Kalisha1234)
-
-## 🙏 Acknowledgments
-
-- [Selenide](https://selenide.org/) - Elegant Selenium wrapper
-- [TestNG](https://testng.org/) - Testing framework
-- [Allure](https://docs.qameta.io/allure/) - Reporting framework
-- [Sauce Demo](https://www.saucedemo.com/) - Test application
-
-## 📞 Support
-
-For issues and questions:
-- 🐛 [Report a Bug](https://github.com/Kalisha1234/UI-Test-Automation-Using-Selenide/issues)
-- 💡 [Request a Feature](https://github.com/Kalisha1234/UI-Test-Automation-Using-Selenide/issues)
-- 📧 Contact via GitHub
-
-## 🔗 Links
-
-- [GitHub Repository](https://github.com/Kalisha1234/UI-Test-Automation-Using-Selenide)
-- [CI/CD Workflow](https://github.com/Kalisha1234/UI-Test-Automation-Using-Selenide/actions)
-- [Allure Reports](https://kalisha1234.github.io/UI-Test-Automation-Using-Selenide/)
-
----
-
-⭐ **Star this repository if you find it helpful!**
+## Contact
+For questions or support, please open an issue in the GitHub repository.
