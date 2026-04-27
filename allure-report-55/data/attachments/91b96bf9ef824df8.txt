@@ -1,0 +1,5 @@
+Element should be visible {#reset_sidebar_link}
+Element: '<a class="bm-item menu-item" data-test="reset-sidebar-link" href="#" id="reset_sidebar_link" tabindex="-1" displayed:false></a>'
+Actual value: hidden
+Screenshot: file:/home/runner/work/UI-Test-Automation-Using-Selenide/UI-Test-Automation-Using-Selenide/build/reports/tests/1777284516426.15.png
+Timeout: 10 s.
